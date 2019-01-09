@@ -1,7 +1,7 @@
 package aplikacja;
 import java.io.File;
 import java.util.ArrayList;
-
+import java.util.Collections;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -84,7 +84,7 @@ public class Main extends Application{
 		
 		for(int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				Kwadracik k = new Kwadracik(41, 41);
+				Kwadracik k = new Kwadracik();
 				kwadraciki.add(k);
 				GridPane.setRowIndex(k, j);
 				GridPane.setColumnIndex(k, i);
@@ -110,9 +110,7 @@ public class Main extends Application{
 			zaladujObrazek();
 		});
 		canvas.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
-			double x = event.getX();
-			double y = event.getY();
-			terazTu
+			przechwycObrazek(event.getX(), event.getY());
 		});
 	}
 	
@@ -126,6 +124,41 @@ public class Main extends Application{
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 		File selectedFile = fileChooser.showOpenDialog(stage);
+	}
+	
+	private void przechwycObrazek(double xdou, double ydou) {
+		int x = (int) xdou;
+		int y = (int) ydou;
+		WritableImage capturedImg = new WritableImage(41, 41);
+		PixelWriter capturedWriter = capturedImg.getPixelWriter();
+		for (int a = 0; a < 41; a++) {
+			for (int b = 0; b < 41; b++) {				
+				capturedWriter.setColor(a, b, Color.color(0, 0, 0));
+			}
+		}
+		for (int a = 0; a < 41; a++) {
+			for (int b = 0; b < 41; b++) {
+				if (((x - 21 + a) >= 0) & ((y - 21 + b) >= 0))  {
+					capturedWriter.setColor(a, b, reader.getColor(x, y));
+				}
+			}
+		}
+		kwadraciki.add(new Kwadracik(capturedImg));
+		Collections.sort(kwadraciki);
+		kwadraciki.remove(25);
+		odswiezObrazki();
+	}
+	
+	public void odswiezObrazki() {
+		for(int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				Kwadracik k = new Kwadracik();
+				kwadraciki.add(k);
+				GridPane.setRowIndex(k, j);
+				GridPane.setColumnIndex(k, i);
+				siatka.getChildren().add(k);
+			}
+		}
 	}
 	
 }
