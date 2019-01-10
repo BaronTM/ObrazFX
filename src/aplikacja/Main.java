@@ -36,6 +36,7 @@ public class Main extends Application{
 	Button czyscBut;
 	
 	ImageView imgView;
+	PixelReader reader;
 	Image image;
 	
 	ArrayList<Kwadracik> kwadraciki;
@@ -62,22 +63,21 @@ public class Main extends Application{
 		imgView.setSmooth(true); // Sprawdzić co to jest???
 		image = new Image(getClass().getResourceAsStream("lenna256px.png"));
 		imgView.setImage(image);
-		
-		
+		reader = imgView.getImage().getPixelReader();		
 		
 		siatka.setHgap(15);
 		siatka.setVgap(15);
 		siatka.setPadding(new Insets(10));
 		
-		for(int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				Kwadracik k = new Kwadracik();
-				kwadraciki.add(k);
-				GridPane.setRowIndex(k, j);
-				GridPane.setColumnIndex(k, i);
-				siatka.getChildren().add(k);
-			}
-		}	
+//		for(int i = 0; i < 5; i++) {
+//			for (int j = 0; j < 5; j++) {
+//				Kwadracik k = new Kwadracik();
+//				kwadraciki.add(k);
+//				GridPane.setRowIndex(k, j);
+//				GridPane.setColumnIndex(k, i);
+//				siatka.getChildren().add(k);
+//			}
+//		}	
 		
 		panelPrzyciskow.getChildren().addAll(wczytajBut, czyscBut);
 		panelPrzyciskow.setPadding(new Insets(0, 30, 30, 30));
@@ -97,7 +97,7 @@ public class Main extends Application{
 			zaladujObrazek();
 		});
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
-			//przechwycObrazek(event.getX(), event.getY());
+			przechwycObrazek(event.getX(), event.getY());
 			System.out.println("X:  " + event.getX() + "    Y:  " + event.getY());
 		});
 	}
@@ -121,8 +121,9 @@ public class Main extends Application{
 		PixelWriter capturedWriter = capturedImg.getPixelWriter();  
 		for (int a = 0; a < 41; a++) {
 			for (int b = 0; b < 41; b++) {
-				if (((x - 21 + a) >= 0) & ((y - 21 + b) >= 0))  {
-					Color color = reader.getColor(x, y);
+				if (((x - 21 + a) >= 0) 
+						& ((y - 21 + b) >= 0))  {
+					Color color = reader.getColor((x - 21 + a), (y - 21 + b));
 					capturedWriter.setColor(a, b, Color.color(
 							color.getRed(),
 							color.getGreen(),
@@ -132,10 +133,11 @@ public class Main extends Application{
 				}
 			} 
 		}
-		kwadraciki.add(new Kwadracik(capturedImg));
-		Collections.sort(kwadraciki);
-		kwadraciki.remove(25);
-		odswiezObrazki();
+		//kwadraciki.add(new Kwadracik(capturedImg));
+		//Collections.sort(kwadraciki);
+		//kwadraciki.remove(25);
+		//odswiezObrazki();
+		siatka.getChildren().add(new Kwadracik(capturedImg));
 	}
 	
 	public void odswiezObrazki() {
