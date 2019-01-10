@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -34,12 +35,8 @@ public class Main extends Application{
 	Button wczytajBut;
 	Button czyscBut;
 	
-	Canvas canvas;
-	GraphicsContext gc;
+	ImageView imgView;
 	Image image;
-	WritableImage dstImage;
-	PixelWriter writer;
-	PixelReader reader;
 	
 	ArrayList<Kwadracik> kwadraciki;
 	GridPane siatka;
@@ -58,25 +55,15 @@ public class Main extends Application{
 		siatka = new GridPane();
 		
 		// Domyslny obrazek
-		canvas = new Canvas(360, 360);
-		gc = canvas.getGraphicsContext2D();
+		imgView = new ImageView();
+		imgView.maxWidth(360);
+		imgView.maxHeight(360);
+		imgView.setPreserveRatio(true);
+		imgView.setSmooth(true); // Sprawdzić co to jest???
 		image = new Image(getClass().getResourceAsStream("lenna256px.png"));
-		dstImage = new WritableImage(360, 360);
-		writer = dstImage.getPixelWriter();
-		reader = dstImage.getPixelReader();
-		for(int x = 0; x < 360; x++) {
-			for (int y = 0; y < 360; y++) {
-				//Color color = Color.valueOf("#43565c");
-				Color color = Color.BLACK;				
-				writer.setColor(x, y, Color.color(
-						color.getRed(), 
-						color.getGreen(), 
-						color.getBlue()));
-			}
-		}
+		imgView.setImage(image);
 		
-		gc.drawImage(dstImage, 0, 0);
-		gc.drawImage(image, 0, 0);
+		
 		
 		siatka.setHgap(15);
 		siatka.setVgap(15);
@@ -98,7 +85,7 @@ public class Main extends Application{
 		panelPrawy.setCenter(siatka);
 		panelPrawy.setPadding(new Insets(0, 0, 0, 10));
 		mainPane.setRight(panelPrawy);
-		mainPane.setLeft(canvas);
+		mainPane.setLeft(imgView);
 		mainPane.setPadding(new Insets(30));
 		
 		primaryStage.setScene(scene);
@@ -109,8 +96,9 @@ public class Main extends Application{
 		wczytajBut.setOnAction(e -> {
 			zaladujObrazek();
 		});
-		canvas.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
-			przechwycObrazek(event.getX(), event.getY());
+		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
+			//przechwycObrazek(event.getX(), event.getY());
+			System.out.println("X:  " + event.getX() + "    Y:  " + event.getY());
 		});
 	}
 	
@@ -130,18 +118,19 @@ public class Main extends Application{
 		int x = (int) xdou;
 		int y = (int) ydou;
 		WritableImage capturedImg = new WritableImage(41, 41);
-		PixelWriter capturedWriter = capturedImg.getPixelWriter();
-		for (int a = 0; a < 41; a++) {
-			for (int b = 0; b < 41; b++) {				
-				capturedWriter.setColor(a, b, Color.color(0, 0, 0));
-			}
-		}
+		PixelWriter capturedWriter = capturedImg.getPixelWriter();  
 		for (int a = 0; a < 41; a++) {
 			for (int b = 0; b < 41; b++) {
 				if (((x - 21 + a) >= 0) & ((y - 21 + b) >= 0))  {
-					capturedWriter.setColor(a, b, reader.getColor(x, y));
+					Color color = reader.getColor(x, y);
+					capturedWriter.setColor(a, b, Color.color(
+							color.getRed(),
+							color.getGreen(),
+							color.getBlue()));
+				} else {
+					capturedWriter.setColor(a, b, Color.color(0, 0, 0));
 				}
-			}
+			} 
 		}
 		kwadraciki.add(new Kwadracik(capturedImg));
 		Collections.sort(kwadraciki);
