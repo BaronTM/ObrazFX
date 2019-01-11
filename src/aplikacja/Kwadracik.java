@@ -15,14 +15,14 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 	PixelWriter writer;
 	PixelReader reader;
 	GraphicsContext gc;
-	long czerwone;
+	double czerwony;
 
 	public Kwadracik() {
 		super(41, 41);
 		wimage = new WritableImage(41, 41);
 		writer = wimage.getPixelWriter();
 		reader = wimage.getPixelReader();
-		czerwone = 0;
+		czerwony = 0;
 		gc = this.getGraphicsContext2D();
 		for (int x = 0; x < 41; x++) {
 			for (int y = 0; y < 41; y++) {
@@ -32,34 +32,24 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 			}
 		}
 		gc.drawImage(wimage, 0, 0);
-		liczCzerwone();
 	}
 
-	public Kwadracik(WritableImage img) {
+	public Kwadracik(WritableImage img, double czerwony) {
 		super(img.getWidth(), img.getHeight());
 		wimage = img;
+		this.czerwony = czerwony;
 		writer = wimage.getPixelWriter();
 		reader = wimage.getPixelReader();
 		gc = this.getGraphicsContext2D();
 		gc.drawImage(wimage, 0, 0);
-		liczCzerwone();
-	}
-
-	public void liczCzerwone() {
-		czerwone = 0;
-		for (int x = 0; x < 41; x++) {
-			for (int y = 0; y < 41; y++) {
-				czerwone += reader.getColor(x, y).getRed();
-			}
-		}
 	}
 
 	@Override
 	public int compareTo(Kwadracik k) {
-		if (this.czerwone > k.czerwone) {
-			return (int) (this.czerwone - k.czerwone);
-		} else if (this.czerwone < k.czerwone) {
-			return (int) (k.czerwone - this.czerwone);
+		if (this.czerwony < k.czerwony) {
+			return (int) ((this.czerwony - k.czerwony) * 10);
+		} else if (this.czerwony > k.czerwony) {
+			return (int) ((this.czerwony - k.czerwony) * 10);
 		} else {
 			return 0;
 		}
