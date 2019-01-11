@@ -1,4 +1,5 @@
 package aplikacja;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +21,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -31,7 +33,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
-public class Main extends Application{
+public class Main extends Application {
 
 	Stage stage;
 	Scene scene;
@@ -41,22 +43,23 @@ public class Main extends Application{
 	FlowPane panelPrzyciskow;
 	Button wczytajBut;
 	Button czyscBut;
-	
+
 	ImageView imgView;
 	PixelReader reader;
 	Image image;
-	
+	double scale;
+
 	ArrayList<Kwadracik> kwadraciki;
 	GridPane siatka;
-	
+
 	// zmienic glowny z border pane na anchor zeby za kazdym razem nie
 	// zmienialo sie rozstawienie kwadracikow
-	
+
 	// w klasie kwadracik tez zmienic z canvas na image bo nie mozna
 	// odczytac koloru czerwonego do poaddania analizy
-	
+
 	// sprobowac map, a jako klucz dawac wartosc nowej klasy xy
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		stage = primaryStage;
@@ -74,26 +77,21 @@ public class Main extends Application{
 		czyscBut = new Button("Czyść");
 		kwadraciki = new ArrayList<Kwadracik>();
 		siatka = new GridPane();
-		
+
 		// Domyslny obrazek
 		imgView = new ImageView();
 		imgView.maxWidth(360);
 		imgView.maxHeight(360);
-//		imgView.minWidth(360);
-//		imgView.minWidth(360);
-//		imgView.setFitHeight(360);
-//		imgView.setFitWidth(360);
 		imgView.setPreserveRatio(true);
 		imgView.setSmooth(true); // Sprawdzić co to jest???
 		image = new Image(getClass().getResourceAsStream("lenna256px.png"));
-		//image = new Image(getClass().getResourceAsStream("que.png"));
 		imgView.setImage(image);
 		reader = imgView.getImage().getPixelReader();
 		siatka.setHgap(15);
 		siatka.setVgap(15);
 		siatka.setPadding(new Insets(10));
-		
-		for(int i = 0; i < 5; i++) {
+
+		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
 				Kwadracik k = new Kwadracik();
 				kwadraciki.add(k);
@@ -101,8 +99,14 @@ public class Main extends Application{
 				GridPane.setColumnIndex(k, i);
 				siatka.getChildren().add(k);
 			}
-		}	
+		}
 		
+		
+		// css 
+		imgView.setId("my-imgv");
+		czyscBut.setId("my-button");
+		wczytajBut.setId("my-button");
+
 		panelPrzyciskow.getChildren().addAll(wczytajBut, czyscBut);
 		panelPrzyciskow.setPadding(new Insets(0, 30, 30, 30));
 		panelPrawy.setTop(panelPrzyciskow);
@@ -113,12 +117,12 @@ public class Main extends Application{
 		GridPane.setRowIndex(panelPodImg, 0);
 		GridPane.setColumnIndex(panelPodImg, 0);
 		mainPane.getChildren().addAll(panelPodImg, panelPrawy);
-		
+
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("ObrazFX");
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		
+
 		wczytajBut.setOnAction(e -> {
 			zaladujObrazek();
 		});
@@ -127,51 +131,48 @@ public class Main extends Application{
 		});
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
 			przechwycObrazek(event.getX(), event.getY());
+			//System.out.println("X " + event.getX() + "   Y " + event.getY());
 		});
 	}
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
+
 	private void zaladujObrazek() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Załaduj obrazek");
-		fileChooser.getExtensionFilters().addAll(
-				new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 		File selectedFile = fileChooser.showOpenDialog(stage);
 		try {
 			image = new Image(new FileInputStream(selectedFile));
+			if ((image.getWidth() > 360) || image.getHeight() > 360) {
+				image = new Image(new FileInputStream(selectedFile), 360, 360, true, true);	
+			}
 			imgView.setImage(image);
-			imgView.maxHeight(360);
-			imgView.maxWidth(360);
 			reader = imgView.getImage().getPixelReader();
 		} catch (Exception e) {
 		}
+		
 	}
-	
+
 	private void przechwycObrazek(double xdou, double ydou) {
 		int x = (int) xdou;
 		int y = (int) ydou;
 		double czerwony = 0;
 		WritableImage capturedImg = new WritableImage(41, 41);
-		PixelWriter capturedWriter = capturedImg.getPixelWriter();  
+		PixelWriter capturedWriter = capturedImg.getPixelWriter();
 		for (int a = 0; a < 41; a++) {
 			for (int b = 0; b < 41; b++) {
-				if (((x - 21 + a) >= 0) 
-						& ((y - 21 + b) >= 0)
-						& ((x - 21 + a) < image.getWidth())
-						& ((y - 21 + b) < image.getHeight()))  {
+				if (((x - 21 + a) >= 0) & ((y - 21 + b) >= 0) & ((x - 21 + a) < image.getWidth())
+						& ((y - 21 + b) < image.getHeight())) {
 					Color color = reader.getColor((x - 21 + a), (y - 21 + b));
-					capturedWriter.setColor(a, b, Color.color(
-							color.getRed(),
-							color.getGreen(),
-							color.getBlue()));
-							czerwony += color.getRed();
+					capturedWriter.setColor(a, b, Color.color(color.getRed(), color.getGreen(), color.getBlue()));
+					czerwony += color.getRed();
 				} else {
 					capturedWriter.setColor(a, b, Color.color(0, 0, 0));
 				}
-			} 
+			}
 		}
 		czerwony = czerwony / 1681;
 		kwadraciki.add(new Kwadracik(capturedImg, czerwony));
@@ -179,11 +180,11 @@ public class Main extends Application{
 		kwadraciki.remove(25);
 		odswiezObrazki();
 	}
-	
+
 	public void odswiezObrazki() {
 		siatka.getChildren().clear();
 		int k = 0;
-		for(int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
 				GridPane.setRowIndex(kwadraciki.get(k), i);
 				GridPane.setColumnIndex(kwadraciki.get(k), j);
@@ -192,11 +193,11 @@ public class Main extends Application{
 			}
 		}
 	}
-	
+
 	public void czysc() {
 		siatka.getChildren().clear();
 		kwadraciki = new ArrayList<Kwadracik>();
-		for(int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
 				Kwadracik kw = new Kwadracik();
 				GridPane.setRowIndex(kw, i);
@@ -206,5 +207,5 @@ public class Main extends Application{
 			}
 		}
 	}
-	
+
 }
