@@ -46,10 +46,10 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 
 	@Override
 	public int compareTo(Kwadracik k) {
-		if (this.czerwony < k.czerwony) {
-			return (int) ((this.czerwony - k.czerwony) * 10);
-		} else if (this.czerwony > k.czerwony) {
-			return (int) ((this.czerwony - k.czerwony) * 10);
+		if (this.czerwony > k.czerwony) {
+			return -1;
+		} else if (this.czerwony < k.czerwony) {
+			return 1;
 		} else {
 			return 0;
 		}

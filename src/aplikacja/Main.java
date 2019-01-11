@@ -1,5 +1,9 @@
 package aplikacja;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -103,10 +107,6 @@ public class Main extends Application{
 		panelPrzyciskow.setPadding(new Insets(0, 30, 30, 30));
 		panelPrawy.setTop(panelPrzyciskow);
 		panelPrawy.setCenter(siatka);
-//		panelPrawy.setLayoutX(410);
-//		panelPrawy.setLayoutY(30);
-//		imgView.setLayoutX(30);
-//		imgView.setLayoutY(30);
 		panelPodImg.getChildren().add(imgView);
 		GridPane.setRowIndex(panelPrawy, 0);
 		GridPane.setColumnIndex(panelPrawy, 1);
@@ -122,9 +122,11 @@ public class Main extends Application{
 		wczytajBut.setOnAction(e -> {
 			zaladujObrazek();
 		});
+		czyscBut.setOnAction(e -> {
+			czysc();
+		});
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
 			przechwycObrazek(event.getX(), event.getY());
-			System.out.println("X:  " + event.getX() + "    Y:  " + event.getY());
 		});
 	}
 	
@@ -138,6 +140,14 @@ public class Main extends Application{
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 		File selectedFile = fileChooser.showOpenDialog(stage);
+		try {
+			image = new Image(new FileInputStream(selectedFile));
+			imgView.setImage(image);
+			imgView.maxHeight(360);
+			imgView.maxWidth(360);
+			reader = imgView.getImage().getPixelReader();
+		} catch (Exception e) {
+		}
 	}
 	
 	private void przechwycObrazek(double xdou, double ydou) {
@@ -168,18 +178,31 @@ public class Main extends Application{
 		Collections.sort(kwadraciki);
 		kwadraciki.remove(25);
 		odswiezObrazki();
-		System.out.println(czerwony);
-		//siatka.getChildren().add(new Kwadracik(capturedImg, czerwony));
 	}
 	
 	public void odswiezObrazki() {
+		siatka.getChildren().clear();
+		int k = 0;
 		for(int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				Kwadracik k = new Kwadracik();
-				kwadraciki.add(k);
-				GridPane.setRowIndex(k, j);
-				GridPane.setColumnIndex(k, i);
-				siatka.getChildren().add(k);
+				GridPane.setRowIndex(kwadraciki.get(k), i);
+				GridPane.setColumnIndex(kwadraciki.get(k), j);
+				siatka.getChildren().add(kwadraciki.get(k));
+				k++;
+			}
+		}
+	}
+	
+	public void czysc() {
+		siatka.getChildren().clear();
+		kwadraciki = new ArrayList<Kwadracik>();
+		for(int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				Kwadracik kw = new Kwadracik();
+				GridPane.setRowIndex(kw, i);
+				GridPane.setColumnIndex(kw, j);
+				siatka.getChildren().add(kw);
+				kwadraciki.add(kw);
 			}
 		}
 	}
