@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
@@ -50,6 +51,10 @@ public class Main extends Application {
 	PixelReader reader;
 	Image image;
 	Image celownik;
+	BorderPane panelCelownika;
+	ImageView celownikView;
+	JFXCustomCursor kursor;
+	
 
 	ArrayList<Kwadracik> kwadraciki;
 	GridPane siatka;
@@ -79,7 +84,7 @@ public class Main extends Application {
 		czyscBut = new Button("Czyść");
 		kwadraciki = new ArrayList<Kwadracik>();
 		siatka = new GridPane();
-
+		
 		// Domyslny obrazek
 		imgView = new ImageView();
 		imgView.maxWidth(360);
@@ -87,13 +92,23 @@ public class Main extends Application {
 		imgView.setPreserveRatio(true);
 		imgView.setSmooth(true); // Sprawdzić co to jest???
 		image = new Image(getClass().getResourceAsStream("lenna256px.png"));
-		celownik = new Image(getClass().getResourceAsStream("celownik.png"));
-		imgView.setCursor(new ImageCursor(celownik, 21, 21));
+		imgView.setCursor(Cursor.DISAPPEAR);
 		imgView.setImage(image);
 		reader = imgView.getImage().getPixelReader();
 		siatka.setHgap(15);
 		siatka.setVgap(15);
 		siatka.setPadding(new Insets(10));
+		
+		// kursor
+		celownik = new Image(getClass().getResourceAsStream("celownik.png"));
+		panelCelownika= new BorderPane();
+		celownikView = new ImageView();
+		celownikView.maxWidth(41);
+		celownikView.maxHeight(41);
+		celownikView.setImage(celownik);
+		panelCelownika.setCenter(celownikView);
+		kursor = new JFXCustomCursor(scene, panelPodImg, panelCelownika, 51, 51);
+		panelCelownika.setVisible(false);
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -136,6 +151,12 @@ public class Main extends Application {
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
 			przechwycObrazek(event.getX(), event.getY());
 			//System.out.println("X " + event.getX() + "   Y " + event.getY());
+		});
+		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_ENTERED, event -> {
+			panelCelownika.setVisible(true);
+		});
+		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_EXITED, event -> {
+			panelCelownika.setVisible(false);
 		});
 	}
 
@@ -211,5 +232,4 @@ public class Main extends Application {
 			}
 		}
 	}
-
 }
