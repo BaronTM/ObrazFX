@@ -32,6 +32,7 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 			}
 		}
 		gc.drawImage(wimage, 0, 0);
+		this.getStyleClass().add("kwadracik");
 	}
 
 	public Kwadracik(WritableImage img, double czerwony) {
@@ -42,6 +43,7 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 		reader = wimage.getPixelReader();
 		gc = this.getGraphicsContext2D();
 		gc.drawImage(wimage, 0, 0);
+		this.getStyleClass().add("kwadracik");
 	}
 
 	@Override

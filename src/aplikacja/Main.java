@@ -7,14 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.ImageCursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -47,7 +49,7 @@ public class Main extends Application {
 	ImageView imgView;
 	PixelReader reader;
 	Image image;
-	double scale;
+	Image celownik;
 
 	ArrayList<Kwadracik> kwadraciki;
 	GridPane siatka;
@@ -85,6 +87,8 @@ public class Main extends Application {
 		imgView.setPreserveRatio(true);
 		imgView.setSmooth(true); // Sprawdzić co to jest???
 		image = new Image(getClass().getResourceAsStream("lenna256px.png"));
+		celownik = new Image(getClass().getResourceAsStream("celownik.png"));
+		imgView.setCursor(new ImageCursor(celownik, 21, 21));
 		imgView.setImage(image);
 		reader = imgView.getImage().getPixelReader();
 		siatka.setHgap(15);
@@ -103,10 +107,10 @@ public class Main extends Application {
 		
 		
 		// css 
-		imgView.setId("my-imgv");
-		czyscBut.setId("my-button");
-		wczytajBut.setId("my-button");
-
+		imgView.getStyleClass().add("obrazek");
+		czyscBut.getStyleClass().add("button");
+		wczytajBut.getStyleClass().add("button");
+		
 		panelPrzyciskow.getChildren().addAll(wczytajBut, czyscBut);
 		panelPrzyciskow.setPadding(new Insets(0, 30, 30, 30));
 		panelPrawy.setTop(panelPrzyciskow);
