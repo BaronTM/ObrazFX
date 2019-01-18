@@ -11,17 +11,15 @@ import javafx.scene.paint.Color;
 
 public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 
-	WritableImage wimage;
-	PixelWriter writer;
-	PixelReader reader;
-	GraphicsContext gc;
-	double czerwony;
+	private WritableImage wimage;
+	private PixelWriter writer;
+	private GraphicsContext gc;
+	private double czerwony;
 
 	public Kwadracik() {
 		super(41, 41);
 		wimage = new WritableImage(41, 41);
 		writer = wimage.getPixelWriter();
-		reader = wimage.getPixelReader();
 		czerwony = 0;
 		gc = this.getGraphicsContext2D();
 		for (int x = 0; x < 41; x++) {
@@ -40,7 +38,6 @@ public class Kwadracik extends Canvas implements Comparable<Kwadracik> {
 		wimage = img;
 		this.czerwony = czerwony;
 		writer = wimage.getPixelWriter();
-		reader = wimage.getPixelReader();
 		gc = this.getGraphicsContext2D();
 		gc.drawImage(wimage, 0, 0);
 		this.getStyleClass().add("kwadracik");

@@ -38,34 +38,26 @@ import javafx.scene.input.MouseEvent;
 
 public class Main extends Application {
 
-	Stage stage;
-	Scene scene;
-	GridPane mainPane;
-	Pane panelPodImg;
-	BorderPane panelPrawy;
-	FlowPane panelPrzyciskow;
-	Button wczytajBut;
-	Button czyscBut;
+	private Stage stage;
+	private Scene scene;
+	private GridPane mainPane;
+	private Pane panelPodImg;
+	private BorderPane panelPrawy;
+	private FlowPane panelPrzyciskow;
+	private Button wczytajBut;
+	private Button czyscBut;
 
-	ImageView imgView;
-	PixelReader reader;
-	Image image;
-	Image celownik;
-	BorderPane panelCelownika;
-	ImageView celownikView;
-	JFXCustomCursor kursor;
+	private ImageView imgView;
+	private PixelReader reader;
+	private Image image;
+	private Image celownik;
+	private BorderPane panelCelownika;
+	private ImageView celownikView;
+	private JFXCustomCursor kursor;
 	
 
-	ArrayList<Kwadracik> kwadraciki;
-	GridPane siatka;
-
-	// zmienic glowny z border pane na anchor zeby za kazdym razem nie
-	// zmienialo sie rozstawienie kwadracikow
-
-	// w klasie kwadracik tez zmienic z canvas na image bo nie mozna
-	// odczytac koloru czerwonego do poaddania analizy
-
-	// sprobowac map, a jako klucz dawac wartosc nowej klasy xy
+	private ArrayList<Kwadracik> kwadraciki;
+	private GridPane siatka;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -150,7 +142,6 @@ public class Main extends Application {
 		});
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
 			przechwycObrazek(event.getX(), event.getY());
-			//System.out.println("X " + event.getX() + "   Y " + event.getY());
 		});
 		imgView.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_ENTERED, event -> {
 			panelCelownika.setVisible(true);
